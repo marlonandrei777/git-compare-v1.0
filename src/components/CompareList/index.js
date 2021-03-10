@@ -27,6 +27,11 @@ const  CompareList = ({ repositories }) => (
                         {repository.lastCommit} <small>last commit</small>
                     </li>
                 </ul>
+
+                <div>
+                    <button>Update</button>
+                    <button>Remove</button>
+                </div>
             </Repository>
         ))}
     </Container>

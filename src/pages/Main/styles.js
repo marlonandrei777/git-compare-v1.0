@@ -43,3 +43,14 @@ export const Form = styled.form`
         }
     }
 `
+/* export const Container2  = styled.div`
+    position: absolute;
+    margin-top: 56px;
+
+    color: #F00;
+    font-weight: bold;
+
+    visibility: ${props => (props.withError ? 'visible' : 'hidden')};
+
+`
+ */

@@ -17,7 +17,16 @@ export default class Main extends Component {
         repositories: [],
     };
 
+    async componentDidMount() {
+        this.setState({ loading: true });
+        this.setState({ loading: false, repositories: await this.getLocalRepositories() });
+    }
+
+    // peguei os dados armazenados no localStorage
+    getLocalRepositories = async () => JSON.parse(await localStorage.getItem('@GitHubCompare:repositories')) || []
+
     handleAddRepository = async (e) => {
+
         e.preventDefault(); /* prevenir o comportamento padrão de um envio de formulário */
 
         this.setState({ loading: true });
@@ -27,11 +36,24 @@ export default class Main extends Component {
 
             repository.lastCommit = moment(repository.pushed_at).fromNow();
 
-            this.setState({
-                repositoryInput: '',
-                repositories: [...this.state.repositories, repository],
-                repositoryError: false,
-            })
+            const pos = this.state.repositories.filter(id => id.id === repository.id);
+            if (pos.length === 0) {
+
+                // armazenando array no local storage
+                localStorage.setItem(
+                    '@GitHubCompare:repositories',
+                    JSON.stringify([repository, ...this.state.repositories])
+                );
+
+                this.setState({
+                    repositoryInput: '',
+                    repositories: [...this.state.repositories, repository],
+                    repositoryError: false,
+                })
+            } else {
+                this.setState({ repositoryAlready: true, repositoryError: true });
+            }
+
         } catch (error) {
             this.setState({ repositoryError: true })
         } finally {
