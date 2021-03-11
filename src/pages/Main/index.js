@@ -12,6 +12,7 @@ export default class Main extends Component {
 
     state = {
         loading: false,
+        repositoryAlready: false,
         repositoryError: false,
         repositoryInput: '', // peguei o valor digitado no input
         repositories: [],
@@ -26,7 +27,6 @@ export default class Main extends Component {
     getLocalRepositories = async () => JSON.parse(await localStorage.getItem('@GitHubCompare:repositories')) || []
 
     handleAddRepository = async (e) => {
-
         e.preventDefault(); /* prevenir o comportamento padrão de um envio de formulário */
 
         this.setState({ loading: true });
@@ -61,6 +61,33 @@ export default class Main extends Component {
         }
     };
 
+    // atualizando repository
+    handleAtt = async (id) => {
+        const { repositories } = this.state;
+        const repository = repositories.find(item => item.id === id);
+        try {
+            const { data } = await api.get(`repos/${repository.full_name}`);
+            data.lastCommit = moment(data.pushed_at).fromNow();
+            this.setState({
+                repositories: repositories.map(repo => (repo.id === data.id ? data : repo)),
+            });
+            await localStorage.setItem('repositories', JSON.stringify(repositories));
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // remove repository
+    handleRemove = async (id) => {
+        const { repositories } = this.state;
+        const updateRepository = repositories.filter(item => item.id !== id);
+
+        this.setState({ repositories: updateRepository });
+        await localStorage.setItem('@GitHubCompare:repositories', JSON.stringify(updateRepository));
+    }
+
+    /* if (!repositoryAlready) */
+
     render() {
         return (
             <Container>
@@ -76,7 +103,11 @@ export default class Main extends Component {
                     <button type="submit">{this.state.loading ? <i className="fa fa-spinner fa-pulse" /> : 'OK'}</button>
                 </Form>
 
-                <CompareList repositories={this.state.repositories}/> {/* recebi como propriedade o this. (informações do state) */}
+                <CompareList
+                    repositories={this.state.repositories}
+                    repositoryRemove={this.handleRemove}
+                    repositoryAtt={this.handleAtt}
+                /> {/* recebi como propriedade o this. (informações do state) */}
             </Container>
         );
     }

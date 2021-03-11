@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Container, Repository } from './styles';
 
-const  CompareList = ({ repositories }) => (
+const  CompareList = ({ repositories, repositoryRemove, repositoryAtt }) => (
     <Container>
         { repositories.map(repository => (
             <Repository key={repository.id}>
@@ -29,8 +29,8 @@ const  CompareList = ({ repositories }) => (
                 </ul>
 
                 <div>
-                    <button>Update</button>
-                    <button>Remove</button>
+                    <button onClick={() => repositoryAtt(repository.id)}>Update</button>
+                    <button onClick={() => repositoryRemove(repository.id)}>Remove</button>
                 </div>
             </Repository>
         ))}
@@ -49,7 +49,9 @@ CompareList.propTypes = {
         forks_count: PropTypes.number,
         open_issues_count: PropTypes.number,
         pushed_at: PropTypes.string,
-    })).isRequired
+    })).isRequired,
+    repositoryRemove: PropTypes.func.isRequired,
+    repositoryAtt: PropTypes.func.isRequired
 }
 
 export default CompareList;

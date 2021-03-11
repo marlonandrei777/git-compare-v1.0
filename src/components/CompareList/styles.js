@@ -77,11 +77,19 @@ export const Repository = styled.div`
 
             background: #63f5b8;
             color: #fff;
+
+            &:hover {
+                background: #52d89f;
+            }
         }
 
         button + button {
             background: rgb(255, 85, 85);
             margin-bottom: 0px;
+
+            &:hover {
+                background: rgb(196, 76, 76);
+            }
         }
     }
 `;
